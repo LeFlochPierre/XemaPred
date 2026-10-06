@@ -1,0 +1,53 @@
+#!/bin/bash
+#PBS -q v1_small72
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=16:mem=32gb
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------
+# PBS runner for reference models
+#
+# Purpose:
+# - Run one reference-model YAML config.
+# - Used for uniform, historical, MC, RW, AR1, MixedAR1, and Smoothing.
+#
+# Required qsub variable:
+# - CONFIG_YAML
+# -----------------------------------------------------------------------
+
+: "${CONFIG_YAML:?CONFIG_YAML env var is required}"
+
+eval "$(~/anaconda3/bin/conda shell.bash hook)"
+conda activate RENV
+
+cd "$PBS_O_WORKDIR"
+
+echo "======================================"
+echo "Reference-model job started on $(hostname) at $(date)"
+echo "Working directory: $PBS_O_WORKDIR"
+echo "CONFIG_YAML: $CONFIG_YAML"
+echo "======================================"
+
+# Avoid thread oversubscription.
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export VECLIB_MAXIMUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export R_STAN_CORES="${R_STAN_CORES:-4}"
+
+# Choose a unique PSOCK port per PBS job.
+JOB_NUM="$(echo "${PBS_JOBID:-$$}" | sed 's/[^0-9].*//')"
+
+if [[ -z "$JOB_NUM" ]]; then
+  JOB_NUM="$$"
+fi
+
+export R_PARALLEL_PORT=$((20000 + (JOB_NUM % 30000)))
+
+echo "R_PARALLEL_PORT: $R_PARALLEL_PORT"
+
+Rscript scripts/01_run_models/reference_models/run_validation.R "$CONFIG_YAML"
+
+echo "Reference-model job finished at $(date)"

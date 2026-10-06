@@ -1,0 +1,30 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/reference_models/MC/t_horizon_1/pfdc_redness_MC.yaml
+#
+# Notes:
+# - The MC reference model is only used for intensity signs:
+#   dryness, redness, swelling, oozing, thickening, scratching.
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"             # PFDC | PFDC | Fake
+score: "redness"            # dryness | redness | swelling | oozing | thickening | scratching
+model: "MC"                 # Reference model for intensity signs only
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon used by get_fc_iteration()
+
+# MCMC settings ----------------------------------------------------------
+
+n_chains: 4                 # Number of Stan chains per MC fit
+n_iter: 2000                # Number of MCMC iterations per chain
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths

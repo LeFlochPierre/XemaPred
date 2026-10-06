@@ -1,0 +1,29 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/reference_models/Smoothing/t_horizon_1/pfdc_SCORAD_smoothing.yaml
+#
+# Notes:
+# - The Smoothing reference model is used for SCORAD only.
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"             # PFDC | PFDC | Fake
+score: "SCORAD"             # Total PO-SCORAD score
+model: "Smoothing"          # Smoothing reference model
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon used by get_fc_iteration()
+
+# MCMC settings ----------------------------------------------------------
+
+n_chains: 4                 # Number of Stan chains per Smoothing fit
+n_iter: 2000                # Number of MCMC iterations per chain
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths

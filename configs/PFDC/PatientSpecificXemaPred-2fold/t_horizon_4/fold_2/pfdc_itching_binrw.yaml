@@ -1,0 +1,78 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/PatientSpecificXemaPred/t_horizon_4/pfdc_itching_binrw.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"          # Derexyl | PFDC | Fake
+score: "itching"            # extent | dryness | redness | swelling | oozing | thickening | scratching | itching | sleep
+model: "BinRW"          # BinMC | OrderedRW | BinRW
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 4                # Forecast/update horizon
+
+# Particle-filter settings -----------------------------------------------
+
+n_particles: 4000           # Number of PF particles per patient
+ess_frac: 0.5               # ESS threshold for resampling, as a fraction of particles
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / patients run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths
+
+# PMMH rejuvenation settings ---------------------------------------------
+
+pmmh_window_n: 20           # Number of consecutive time steps used in each PMMH update
+
+# -----------------------------------------------------------------------
+# Held-out within-cohort 2-fold ROBUST MIXTURE-prior experiment
+#
+# Population prior:
+#   PFDC Fold 1
+#
+# Patient-specific target:
+#   PFDC Fold 2
+#
+# Cross-fitting direction:
+#   Fold 1 population prior -> Fold 2 patients
+#
+# Mixture prior:
+#   p(theta) = (1-w) p_base(theta) + w p_population(theta)
+#   w = 1.00
+#
+# Target and source folds MUST differ to avoid patient leakage.
+# -----------------------------------------------------------------------
+
+n_patient_folds: 2
+patient_fold: 2
+
+# -----------------------------------------------------------------------
+# Population-informed robust mixture prior
+# -----------------------------------------------------------------------
+
+prior_mode: population
+prior_combination: mixture
+
+# In mixture mode prior_power is the population mixture weight w.
+prior_power: 1.00
+
+prior_root: "priors/population_xemapred_2fold"
+
+# Same cohort, but strictly held-out source fold.
+prior_source_dataset: "PFDC"
+prior_source_fold: 1
+allow_same_dataset_prior: true
+
+# Exact held-out fold-specific population posterior.
+population_prior_file: "priors/population_xemapred_2fold/PFDC/fold_1/itching.rds"
+
+# Keep the same mixture prior during PMMH rejuvenation.
+pmmh_prior_mode: matched
+
+# Unique output/cache directory for this mixture weight and fold direction.
+run_suffix: "PopPrior-fold-2"

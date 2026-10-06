@@ -1,0 +1,30 @@
+# -----------------------------------------------------------------------
+# configs/Derexyl/reference_models/RW/t_horizon_1/derexyl_sleep_RW.yaml
+#
+# Notes:
+# - The RW reference model is used for:
+#   extent, itching, sleep, and SCORAD.
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "Derexyl"          # Derexyl | PFDC | Fake
+score: "sleep"              # extent | itching | sleep | SCORAD
+model: "RW"                 # Random-walk reference model
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon used by get_fc_iteration()
+
+# MCMC settings ----------------------------------------------------------
+
+n_chains: 4                 # Number of Stan chains per RW fit
+n_iter: 2000                # Number of MCMC iterations per chain
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths

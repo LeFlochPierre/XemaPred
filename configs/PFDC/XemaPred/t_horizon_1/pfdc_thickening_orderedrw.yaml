@@ -1,0 +1,39 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/XemaPred/t_horizon_1/pfdc_thickening_orderedrw.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"             # Derexyl | PFDC | Fake
+score: "thickening"         # extent | dryness | redness | swelling | oozing | thickening | scratching | itching | sleep
+model: "OrderedRW"          # BinMC | OrderedRW | BinRW
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon
+
+# Particle-filter settings -----------------------------------------------
+
+n_particles: 4000           # Number of particles for PF runs
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 16               # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths
+cohort: true                # If true, use the cohort/population-level XemaPred workflow
+smc2: true                  # If true, use SMC² with parameter particles and inner PFs
+
+# SMC² settings ----------------------------------------------------------
+
+n_theta: 200                # Number of parameter particles
+n_x: 200                    # Number of inner state particles per parameter particle
+
+ess_theta: 0.5              # ESS threshold for parameter-particle resampling
+ess_x: 0.5                  # ESS threshold for inner state-particle resampling
+
+# PMMH rejuvenation settings ---------------------------------------------
+pmmh_window_n: 10           # PMMH window size; use Inf for all available data
+

@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/EczemaPred/t_horizon_4/pfdc_scratching_orderedrw.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"             # Derexyl | PFDC | Fake
+score: "scratching"         # extent | dryness | redness | swelling | oozing | thickening | scratching | itching | sleep
+model: "OrderedRW"          # BinMC | OrderedRW | BinRW
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 4                # Forecast/update horizon
+
+# Stan/MCMC settings -----------------------------------------------------
+
+n_chains: 4                 # Number of Stan chains per model fit
+n_iter: 2000                # Number of MCMC iterations per chain
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths
+fit_only: false              # If true, only fits final iteration to extract power priors
+debug_one_patient: false    # If true, run only one patient for debugging

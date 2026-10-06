@@ -1,0 +1,65 @@
+# Generated outputs and data
+results/
+results_EczemaPred2/
+priors/
+plots/
+logs/
+*.log
+*.out
+*.err
+
+# Large or generated environments
+container_export/
+packages/
+
+# R temporary files and serialized outputs
+.Rhistory
+.RData
+.Rproj.user/
+*.RData
+*.rds
+*.rda
+
+# Cleanup and monitoring jobs
+jobs/cleanup/
+jobs/check_eczemapred_runs.py
+jobs/check_hpc_queues.py
+jobs/check_reference_runs.py
+jobs/check_xemapred_runs.py
+jobs/rename_folder.sh
+
+# Old, failed, or experimental job scripts
+jobs/reference_models/submit_failed_reference_jobs.sh
+jobs/EczemaPred/submit_eczemapred_intense.sh
+jobs/EczemaPred/run_eczemapred_intense.pbs
+jobs/EczemaPred/old/
+
+# Old or experimental model code
+scripts/01_run_models/EczemaPred_old1/
+scripts/01_run_models/old/
+
+# Generated Stan code dumps
+stan_code_dump/
+
+# Local helper files and comparison scripts
+check_functions.R
+compare_seed_runs.R
+comapre_seed_runs.R
+rename_patient_specific.sh
+rename_patient_specific.sh.pR
+RDS.txt
+
+# Plotting checks and exploratory analyses
+scripts/03_plotting/functions_check/
+scripts/03_plotting/posterior_check/
+scripts/03_plotting/runtime/check_runtime_speedup_final.R
+scripts/03_plotting/learning_curves/check_coverage.R
+scripts/03_plotting/learning_curves/forecasting_performance_learning_curves_h1.R
+scripts/03_plotting/ess/
+scripts/03_plotting/shared/posterior_fidelity_helper.R
+scripts/03_plotting/forecasting_snapshot/
+scripts/03_plotting/dump/
+scripts/02_process_results/compare_pop_priors_fold.R
+
+# Mobile benchmark experiments are kept out of the repository
+benchmarks/

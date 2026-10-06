@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# configs/Derexyl/reference_models/historical/t_horizon_1/derexyl_itching_historical.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "Derexyl"          # Derexyl | PFDC | Fake
+score: "itching"            # POSCORAD item to model
+model: "historical"         # Reference model: uniform | historical | RW | MC
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon used by get_fc_iteration()
+
+# MCMC settings ----------------------------------------------------------
+# Not used by the historical model, but kept for compatibility with the
+# shared config parser.
+
+n_chains: 4                 # Ignored by historical model
+n_iter: 2000                # Ignored by historical model
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths

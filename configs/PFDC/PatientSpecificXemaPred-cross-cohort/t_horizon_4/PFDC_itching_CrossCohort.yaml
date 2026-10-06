@@ -1,0 +1,96 @@
+# -----------------------------------------------------------------------
+# Cross-cohort population-informed PatientSpecificXemaPred
+#
+# Target cohort:
+#   PFDC
+#
+# Reference population:
+#   Derexyl
+#
+# Mixture prior:
+#
+#   p(theta) =
+#       (1-w) p_base(theta)
+#       + w p_population(theta)
+#
+# Population-prior weight:
+#   w = 0.50
+#
+# Source and target are independent cohorts, so no patient-fold split
+# is required.
+# -----------------------------------------------------------------------
+
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"
+score: "itching"
+model: "BinRW"
+
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 4
+
+
+# Particle-filter settings -----------------------------------------------
+
+n_particles: 4000
+ess_frac: 0.5
+
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4
+
+
+# Run mode ---------------------------------------------------------------
+
+run: true
+
+
+# PMMH rejuvenation settings ---------------------------------------------
+
+pmmh_window_n: 20
+
+
+# -----------------------------------------------------------------------
+# Cross-cohort population-informed prior
+# -----------------------------------------------------------------------
+
+prior_mode: population
+prior_combination: mixture
+
+# In mixture mode, prior_power corresponds to the population-prior
+# mixture weight w.
+prior_power: 0.50
+
+prior_root: "priors/population_xemapred"
+
+prior_source_dataset: "Derexyl"
+
+population_prior_file: "priors/population_xemapred/Derexyl/itching.rds"
+
+# Source and target datasets are different.
+allow_same_dataset_prior: false
+
+# Keep the same prior during PMMH rejuvenation.
+pmmh_prior_mode: matched
+
+
+# -----------------------------------------------------------------------
+# Target cohort
+#
+# Evaluate all patients because the informative prior comes from an
+# independent dataset.
+# -----------------------------------------------------------------------
+
+n_patient_folds: 1
+patient_fold: 1
+
+
+# -----------------------------------------------------------------------
+# Output naming
+# -----------------------------------------------------------------------
+
+run_suffix: "CrossCohort"

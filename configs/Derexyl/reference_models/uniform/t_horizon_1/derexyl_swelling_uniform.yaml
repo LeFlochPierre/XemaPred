@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# configs/Derexyl/reference_models/uniform/t_horizon_1/derexyl_swelling_uniform.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "Derexyl"          # Derexyl | PFDC | Fake
+score: "swelling"           # extent | dryness | redness | swelling | oozing | thickening | scratching | itching | sleep | SCORAD
+model: "uniform"            # Uniform reference model
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 1                # Forecast/update horizon used by get_fc_iteration()
+
+# MCMC settings ----------------------------------------------------------
+# Not used by the uniform model, but kept for compatibility with the
+# shared config parser.
+
+n_chains: 4                 # Ignored by uniform model
+n_iter: 2000                # Ignored by uniform model
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / iterations run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths

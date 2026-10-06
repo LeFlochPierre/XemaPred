@@ -1,0 +1,42 @@
+#!/bin/bash
+#PBS -q v1_large24
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=16:mem=32gb
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------
+# PBS runner for one PatientSpecificXemaPred YAML config
+# -----------------------------------------------------------------------
+
+: "${CONFIG_YAML:?CONFIG_YAML env var is required (passed via qsub -v CONFIG_YAML=...)}"
+
+eval "$(~/anaconda3/bin/conda shell.bash hook)"
+conda activate RENV
+
+cd "$PBS_O_WORKDIR"
+
+echo "======================================"
+echo "PatientSpecificXemaPred job started on $(hostname) at $(date)"
+echo "PBS_JOBID: ${PBS_JOBID:-unknown}"
+echo "Working directory: $PBS_O_WORKDIR"
+echo "CONFIG_YAML: $CONFIG_YAML"
+echo "======================================"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export VECLIB_MAXIMUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export R_STAN_CORES="${R_STAN_CORES:-4}"
+
+JOB_NUM="$(echo "${PBS_JOBID:-$$}" | sed 's/[^0-9].*//')"
+if [[ -z "$JOB_NUM" ]]; then
+  JOB_NUM="$$"
+fi
+export R_PARALLEL_PORT=$((20000 + (JOB_NUM % 30000)))
+echo "R_PARALLEL_PORT: $R_PARALLEL_PORT"
+
+Rscript scripts/01_run_models/PatientSpecificXemaPred/run_validation.R "$CONFIG_YAML"
+
+echo "PatientSpecificXemaPred job finished at $(date)"

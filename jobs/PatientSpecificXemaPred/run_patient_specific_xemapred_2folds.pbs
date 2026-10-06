@@ -1,0 +1,83 @@
+#!/bin/bash
+
+#PBS -q v1_large72
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=16:mem=32gb
+
+set -euo pipefail
+
+: "${CONFIG_YAML:?CONFIG_YAML env var is required}"
+
+eval "$(~/anaconda3/bin/conda shell.bash hook)"
+conda activate RENV
+
+cd "$PBS_O_WORKDIR"
+
+echo "============================================================"
+echo "PatientSpecificXemaPred 2-fold mixture-prior job"
+echo "Started: $(date)"
+echo "Host: $(hostname)"
+echo "PBS_JOBID: ${PBS_JOBID:-unknown}"
+echo
+echo "Working directory: $PBS_O_WORKDIR"
+echo "CONFIG_YAML: $CONFIG_YAML"
+echo "DATASET: ${DATASET:-unknown}"
+echo "SIGN: ${SIGN:-unknown}"
+echo "TARGET_FOLD: ${TARGET_FOLD:-unknown}"
+echo "SOURCE_FOLD: ${SOURCE_FOLD:-unknown}"
+echo "HORIZON: ${HORIZON:-unknown}"
+echo "WEIGHT_TAG: ${WEIGHT_TAG:-unknown}"
+echo "============================================================"
+
+# Prevent BLAS/OpenMP oversubscription.
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export VECLIB_MAXIMUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
+# Give parallel R jobs different socket-port ranges.
+JOB_NUM="$(echo "${PBS_JOBID:-$$}" | sed 's/[^0-9].*//')"
+
+if [[ -z "$JOB_NUM" ]]; then
+  JOB_NUM="$$"
+fi
+
+export R_PARALLEL_PORT=$((20000 + (JOB_NUM % 30000)))
+
+echo "R_PARALLEL_PORT: $R_PARALLEL_PORT"
+
+# IMPORTANT: use the V3 runner containing mixture-prior support.
+RUNNER="scripts/01_run_models/PatientSpecificXemaPredV3/run_validation.R"
+
+if [[ ! -f "$RUNNER" ]]; then
+  echo "[ERROR] Could not find PatientSpecificXemaPredV3 runner:"
+  echo "        $RUNNER"
+  exit 1
+fi
+
+if [[ ! -f "$CONFIG_YAML" ]]; then
+  echo "[ERROR] Config does not exist:"
+  echo "        $CONFIG_YAML"
+  exit 1
+fi
+
+echo
+echo "Using runner:"
+echo "  $RUNNER"
+echo
+echo "Using config:"
+echo "  $CONFIG_YAML"
+echo
+echo "Prior settings from config:"
+grep -E '^(prior_mode|prior_combination|prior_power|patient_fold|prior_source_fold|population_prior_file|pmmh_prior_mode|run_suffix):' \
+  "$CONFIG_YAML" || true
+echo
+
+Rscript "$RUNNER" "$CONFIG_YAML"
+
+echo
+echo "============================================================"
+echo "PatientSpecificXemaPred 2-fold mixture-prior job finished"
+echo "Finished: $(date)"
+echo "============================================================"

@@ -1,0 +1,30 @@
+# -----------------------------------------------------------------------
+# configs/PFDC/PatientSpecificXemaPred/t_horizon_4/pfdc_scratching_orderedrw.yaml
+# -----------------------------------------------------------------------
+
+# Dataset and target -----------------------------------------------------
+
+dataset: "PFDC"          # Derexyl | PFDC | Fake
+score: "scratching"            # extent | dryness | redness | swelling | oozing | thickening | scratching | itching | sleep
+model: "OrderedRW"          # BinMC | OrderedRW | BinRW
+
+# Forward-chaining setup -------------------------------------------------
+
+t_horizon: 4                # Forecast/update horizon
+
+# Particle-filter settings -----------------------------------------------
+
+n_particles: 4000           # Number of PF particles per patient
+ess_frac: 0.5               # ESS threshold for resampling, as a fraction of particles
+
+# Parallelisation --------------------------------------------------------
+
+n_cluster: 4                # Number of foreach workers / patients run in parallel
+
+# Run mode ---------------------------------------------------------------
+
+run: true                   # If false, only checks config and prepares paths
+
+# PMMH rejuvenation settings ---------------------------------------------
+
+pmmh_window_n: 20           # Number of consecutive time steps used in each PMMH update
